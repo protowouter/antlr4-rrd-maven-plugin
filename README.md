@@ -41,7 +41,8 @@ src/main/antlr4
 
 If you want to deviate from this default you can set the configuration option sourceDirectory
 
-When you build your maven project the generated diagrams will be put in target/doc/railroad.
+When you build your maven project the generated diagrams will be put in target/doc/railroad. This default directory can be changed by
+setting the outputDirectory setting.
 
 
 ### Example pom.xml
