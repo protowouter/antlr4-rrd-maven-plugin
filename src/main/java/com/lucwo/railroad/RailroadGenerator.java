@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -102,8 +103,11 @@ public class RailroadGenerator extends AbstractMojo {
                 Path source = temp.resolve(html);
                 Path destination = outputPath.resolve(html);
                 Files.createDirectories(destination.getParent());
-                Files.move(source, destination);
+                Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                Files.deleteIfExists(source.getParent());
             }
+
+            Files.deleteIfExists(Paths.get("./output"));
         } catch (IOException e) {
             throw new MojoExecutionException("Unable to move generated html files", e);
         }
