@@ -1,5 +1,6 @@
 package com.lucwo.railroad;
 
+import com.google.common.io.Files;
 import nl.bigo.rrdantlr4.DiagramGenerator;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -40,14 +41,13 @@ public class RailroadGenerator extends AbstractMojo {
      */
     @Parameter(defaultValue = "${basedir}/src/main/antlr4")
     private File sourceDirectory;
-
     /**
      * Specify output directory where the Java files are generated.
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/railroad")
+    @Parameter(defaultValue = "${project.build.directory}/doc/railroad")
     private File outputDirectory;
 
-    @Override
+
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         try {
@@ -77,14 +77,18 @@ public class RailroadGenerator extends AbstractMojo {
         for (File grammarFile : grammarFiles) {
             try {
                 DiagramGenerator generator = new DiagramGenerator(grammarFile.getAbsolutePath());
-                for(String ruleName : generator.getRules().keySet()) {
-                    String svg = generator.getSVG(ruleName);
-                }
                 String path = grammarFile.getName() + ".html";
                 boolean success = generator.createHtml(path);
             } catch (IOException e) {
                 throw new MojoExecutionException("Could not read grammar file", e);
             }
+        }
+
+        File output = new File("./output/");
+        try {
+            Files.move(output, outputDirectory);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Unable to move generated html files", e);
         }
 
     }
