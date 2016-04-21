@@ -1,6 +1,5 @@
 package com.lucwo.railroad;
 
-import com.google.common.io.Files;
 import nl.bigo.rrdantlr4.DiagramGenerator;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -17,6 +16,9 @@ import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -73,20 +75,35 @@ public class RailroadGenerator extends AbstractMojo {
 
         scan.addSourceMapping(mapping);
         Set<File> grammarFiles = scan.getIncludedSources(sourceDirectory, null);
+        Set<String> generatedFiles = new HashSet<String>();
+
+        getLog().info(String.format("Generating %s railroad diagrams", grammarFiles.size()));
+
+        Path temp = Paths.get("./output");
 
         for (File grammarFile : grammarFiles) {
             try {
                 DiagramGenerator generator = new DiagramGenerator(grammarFile.getAbsolutePath());
                 String path = grammarFile.getName() + ".html";
                 boolean success = generator.createHtml(path);
+                if (success) {
+                    String gen = grammarFile.getName().replaceFirst("[.][^.]+$", "") + "/" + path;
+                    generatedFiles.add(gen);
+                }
             } catch (IOException e) {
                 throw new MojoExecutionException("Could not read grammar file", e);
             }
         }
 
-        File output = new File("./output/");
+        Path outputPath = Paths.get(outputDirectory.getAbsolutePath());
+
         try {
-            Files.move(output, outputDirectory);
+            for (String html : generatedFiles) {
+                Path source = temp.resolve(html);
+                Path destination = outputPath.resolve(html);
+                Files.createDirectories(destination.getParent());
+                Files.move(source, destination);
+            }
         } catch (IOException e) {
             throw new MojoExecutionException("Unable to move generated html files", e);
         }
