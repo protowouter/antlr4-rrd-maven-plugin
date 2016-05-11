@@ -94,6 +94,8 @@ public class RailroadGenerator extends AbstractMojo {
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException("Could not read grammar file", e);
+            } catch (Exception e) {
+                getLog().error(String.format("Grammar %s failed, skipping", grammarFile.getName()));
             }
         }
 
