@@ -84,6 +84,7 @@ public class RailroadGenerator extends AbstractMojo {
 
         for (File grammarFile : grammarFiles) {
             try {
+                getLog().info(String.format("%s", grammarFile.getPath()));
                 DiagramGenerator generator = new DiagramGenerator(grammarFile.getAbsolutePath());
                 String path = grammarFile.getName() + ".html";
                 boolean success = generator.createHtml(path);
