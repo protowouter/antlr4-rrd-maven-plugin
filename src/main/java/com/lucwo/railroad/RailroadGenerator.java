@@ -100,19 +100,22 @@ public class RailroadGenerator extends AbstractMojo {
         }
 
         Path outputPath = Paths.get(outputDirectory.getAbsolutePath());
-
-        try {
             for (String html : generatedFiles) {
-                Path source = temp.resolve(html);
-                Path destination = outputPath.resolve(html);
-                Files.createDirectories(destination.getParent());
-                Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
-                Files.deleteIfExists(source.getParent());
+                try {
+                    Path source = temp.resolve(html);
+                    Path destination = outputPath.resolve(html);
+                    Files.createDirectories(destination.getParent());
+                    Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                    Files.deleteIfExists(source.getParent());
+                } catch (IOException e) {
+                    getLog().error("Unable to move generated html file", e);
+                }
             }
 
+        try {
             Files.deleteIfExists(Paths.get("./output"));
         } catch (IOException e) {
-            throw new MojoExecutionException("Unable to move generated html files", e);
+            getLog().error("Failed to delete railroad diagram output directory", e);
         }
 
     }
