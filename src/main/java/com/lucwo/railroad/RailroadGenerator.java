@@ -29,6 +29,8 @@ import java.util.Set;
         requiresProject = true)
 public class RailroadGenerator extends AbstractMojo {
 
+    public static String RR_TEMP = "./tmp/rrd";
+
     @Parameter
     protected Set<String> includes = new HashSet<String>();
     /**
@@ -80,7 +82,7 @@ public class RailroadGenerator extends AbstractMojo {
 
         getLog().info(String.format("Generating %s railroad diagrams", grammarFiles.size()));
 
-        Path temp = Paths.get("./output");
+        Path temp = Paths.get(RR_TEMP);
 
         for (File grammarFile : grammarFiles) {
             try {
@@ -112,11 +114,7 @@ public class RailroadGenerator extends AbstractMojo {
                 }
             }
 
-        try {
-            Files.deleteIfExists(Paths.get("./output"));
-        } catch (IOException e) {
-            getLog().error("Failed to delete railroad diagram output directory", e);
-        }
+            DIrUtils.removeRecursive(Paths.get(RR_TEMP), getLog());
 
     }
 
