@@ -29,7 +29,7 @@ import java.util.Set;
         requiresProject = true)
 public class RailroadGenerator extends AbstractMojo {
 
-    public static String RR_TEMP = "./tmp/rrd";
+    public static String RR_TEMP = "./output/";
 
     @Parameter
     protected Set<String> includes = new HashSet<String>();
